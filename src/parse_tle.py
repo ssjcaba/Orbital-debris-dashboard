@@ -44,14 +44,3 @@ def compute_positions(records, ts, time):
     return collection
 
 
-# Script: load records, build times, compute positions, show table
-ts = load.timescale()
-timeoffsets = [0, 60, 120, 180]
-time = ts.utc(2026, 1, 13, 2, 20, timeoffsets)
-
-records = load_tle_records("data/tle_raw.txt")
-collection = compute_positions(records, ts, time)
-
-table = pd.DataFrame(collection)
-print(table.head())
-
