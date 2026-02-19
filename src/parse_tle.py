@@ -23,24 +23,48 @@ def load_tle_records(filepath):
 
 
 def compute_positions(records, ts, time):
-    """From TLE records, timescale, and times, return a list of snapshot dicts (name, time, lat, lon, alt_km)."""
+    """From TLE records, timescale, and times, return a list of snapshot dicts."""
     collection = []
+    
+    # Figure out if 'time' is an array or a single time object
+    try:
+        num_times = len(time)
+        is_array = True
+    except TypeError:
+        num_times = 1
+        is_array = False
+
     for name, line1, line2 in records:
         satellite = EarthSatellite(line1, line2, name, ts)
         geocentric = satellite.at(time)
         subpoint = wgs84.subpoint(geocentric)
-        latitude = subpoint.latitude.degrees
-        longitude = subpoint.longitude.degrees
-        altitude = subpoint.elevation.km
-        for j in range(len(time)):
+        
+        lat = subpoint.latitude.degrees
+        lon = subpoint.longitude.degrees
+        alt = subpoint.elevation.km
+        
+        if is_array:
+            # Handle multiple times (e.g., a path)
+            for j in range(num_times):
+                snapshot = {
+                    "name": name,
+                    "time": time[j].utc_iso(),
+                    "lat": lat[j],
+                    "lon": lon[j],
+                    "alt_km": alt[j],
+                }
+                collection.append(snapshot)
+        else:
+            # Handle a single time (e.g., a current snapshot)
             snapshot = {
                 "name": name,
-                "time": time[j].utc_iso(),
-                "lat": latitude[j],
-                "lon": longitude[j],
-                "alt_km": altitude[j],
+                "time": time.utc_iso(),
+                "lat": lat,
+                "lon": lon,
+                "alt_km": alt,
             }
             collection.append(snapshot)
+            
     return collection
 
 
