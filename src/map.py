@@ -3,7 +3,7 @@ import pandas as pd
 from parse_tle import compute_positions, load_tle_records
 from skyfield.api import load 
 
-def create_map(data):
+def create_map(data): 
     m = folium.Map(location=[0,0])
     for index, row in data.iterrows(): 
         folium.Marker(
