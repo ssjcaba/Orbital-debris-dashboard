@@ -1,6 +1,6 @@
 import folium 
 import pandas as pd
-from parse_tle import compute_positions, load_tle_records
+from src.parse_tle import compute_positions, load_tle_records
 from skyfield.api import load 
 
 def create_map(data): 
