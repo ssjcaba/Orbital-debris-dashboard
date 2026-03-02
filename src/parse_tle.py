@@ -39,6 +39,9 @@ def compute_positions(records, ts, time):
         geocentric = satellite.at(time)
         subpoint = wgs84.subpoint(geocentric)
         
+        # New: Get the X, Y, Z coordinates in kilometers
+        pos_km = geocentric.position.km
+        
         lat = subpoint.latitude.degrees
         lon = subpoint.longitude.degrees
         alt = subpoint.elevation.km
@@ -52,6 +55,10 @@ def compute_positions(records, ts, time):
                     "lat": lat[j],
                     "lon": lon[j],
                     "alt_km": alt[j],
+                    # Extracting specific j-index for arrays
+                    "x": pos_km[0][j],
+                    "y": pos_km[1][j],
+                    "z": pos_km[2][j],
                 }
                 collection.append(snapshot)
         else:
@@ -62,6 +69,10 @@ def compute_positions(records, ts, time):
                 "lat": lat,
                 "lon": lon,
                 "alt_km": alt,
+                # Simple extraction for single time
+                "x": pos_km[0],
+                "y": pos_km[1],
+                "z": pos_km[2],
             }
             collection.append(snapshot)
             
