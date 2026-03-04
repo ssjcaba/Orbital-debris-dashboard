@@ -8,6 +8,8 @@ def calc_distance(row1, row2):
 
         dist = math.sqrt(dx**2 + dy**2 + dz**2)
 
+        return dist
+
 #Below is a function that takes my entire table 
 # And compares every satellite to each other to find
 #the danger zone pairs
