@@ -14,7 +14,7 @@ def calc_distance(row1, row2):
 # And compares every satellite to each other to find
 #the danger zone pairs
 
-def find_risks(df):
+def find_risks(df, threshold):
     risks = []
     for i in range(len(df)):
 
@@ -23,11 +23,11 @@ def find_risks(df):
             sat2 = df.iloc[j]
 
             dist = calc_distance(sat1,sat2)
-            if dist < 700:
+            if dist < threshold:
                 risks.append({
                     "satellite_1": sat1['name'],
                     "satellite_2": sat2['name'],
-                    "distance": dist
+                    "distance": round(dist, 2)
                 })
     return risks 
 

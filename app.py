@@ -23,28 +23,28 @@ def get_satellite_data():
     results = compute_positions(records, ts, t)
     return pd.DataFrame(results)
 
-# 3. EXECUTION: Get the data and build the map
+# 3. DATA & SETTINGS: Get data and define threshold first
 df = get_satellite_data()
-danger = find_risks(df)
+
+with st.sidebar:
+    st.header("⚙️ Settings")
+    limit = st.slider("Collision Threshold (km)", 10, 5000, 700)
+    st.divider()
+
+# 4. EXECUTION: Now pass 'limit' to find_risks
+danger = find_risks(df, limit)
 my_map = create_map(df) 
 
-# 4. DISPLAY: Added a 'key' here to tell Streamlit not to refresh the component
+# 5. DISPLAY: Main map and sidebar alerts
 st_folium(my_map, width=700, height=500, key="orbital_map")
-
-
-
-st.title("Risk of Collision")
 
 with st.sidebar:
     st.header("🛰️ Collision Alerts")
-    
     if len(danger) > 0:
         st.warning(f"Found {len(danger)} risks")
-        
         for risk in danger:
             st.write(f"**{risk['satellite_1']}** vs **{risk['satellite_2']}**")
             st.write(f"Distance: {risk['distance']} km")
             st.divider() 
-            
     else:
         st.success("All clear! No risks found.")
