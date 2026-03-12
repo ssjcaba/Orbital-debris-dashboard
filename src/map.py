@@ -4,7 +4,7 @@ from src.parse_tle import compute_positions, load_tle_records
 from skyfield.api import load 
 
 def create_map(data, danger_list):
-    m = folium.Map(location=[0,0], tiles="CartoDB dark_matter")
+    m = folium.Map(location=[0,0], tiles="CartoDB dark_matter", zoom_start=3)
     
     # Create a simple set of names that are in danger for fast lookup
     danger_names = set()
