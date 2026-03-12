@@ -13,29 +13,37 @@ st.title("Orbital Debris Tracker")
 def get_satellite_data():
     ts = load.timescale()
     t = ts.now()
-    records = load_tle_records("data/tle_raw.txt")
+    # Live URL for Active Satellites
+    url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle"
+    records = load_tle_records(url)
     results = compute_positions(records, ts, t)
     return pd.DataFrame(results)
 
 # 1. DATA
 df = get_satellite_data()
 
-# 2. DIAGNOSTIC BONE (Look at the X, Y, Z columns here!)
-st.subheader("Data Preview")
-st.write(df.head())
-
-# 3. SETTINGS
+# 2. SETTINGS
 with st.sidebar:
     st.header("⚙️ Settings")
     limit = st.slider("Collision Threshold (km)", 10, 5000, 700)
     st.divider()
 
-# 4. EXECUTION
-danger = find_risks(df, limit)
-my_map = create_map(df) 
+# 3. EXECUTION
+# We take a slice (first 400) so the map doesn't crash your browser
+df_limited = df.head(25) 
 
-# 5. DISPLAY
-st_folium(my_map, width=900, height=500, key="orbital_map")
+danger = find_risks(df_limited, limit)
+
+# IMPORTANT: You need to pass 'danger' here so the dots turn red!
+my_map = create_map(df_limited, danger) 
+
+# 4. DISPLAY
+# Move the table into an expander so the map can actually show up
+with st.expander("📊 View Raw Satellite Data"):
+    st.write(df_limited)
+
+st.subheader("🛰️ Live Orbital Map")
+st_folium(my_map, width=1000, height=600, key="orbital_map")
 
 with st.sidebar:
     st.header("🛰️ Collision Alerts")
@@ -43,6 +51,7 @@ with st.sidebar:
         st.warning(f"Found {len(danger)} risks")
         for risk in danger:
             st.write(f"**{risk['satellite_1']}** vs **{risk['satellite_2']}**")
+            # Using standard text instead of LaTeX for distance
             st.write(f"Distance: {risk['distance']} km")
             st.divider() 
     else:

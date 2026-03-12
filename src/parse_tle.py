@@ -1,25 +1,22 @@
 from skyfield.api import load, EarthSatellite, wgs84
 import numpy as np
 import pandas as pd
+import requests
 
-def load_tle_records(filepath):
-    """Read a TLE file and return a list of (name, line1, line2) per satellite."""
-    with open(filepath, "r") as file:
-        lines = file.readlines()
-    lines = [line.strip() for line in lines if line.strip()]
-
-    if len(lines) < 2:
-        raise ValueError("TLE file does not contain enough lines")
-
-    result = []
-    i = 0
-    while i + 2 <= len(lines):
-        name = lines[i]
-        line1 = lines[i + 1]
-        line2 = lines[i + 2]
-        result.append((name, line1, line2))
-        i += 3
-    return result
+def load_tle_records(source):
+    # If source starts with http, it's a URL; otherwise, it's a file
+    if source.startswith('http'):
+        response = requests.get(source)
+        data = response.text.splitlines()
+    else:
+        with open(source, 'r') as f:
+            data = f.readlines()
+            
+    # Your existing logic to group lines into 3s goes here...
+    records = []
+    for i in range(0, len(data) - 2, 3):
+        records.append((data[i].strip(), data[i+1].strip(), data[i+2].strip()))
+    return records
 
 
 def compute_positions(records, ts, time):
