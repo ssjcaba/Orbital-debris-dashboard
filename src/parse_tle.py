@@ -11,7 +11,7 @@ def load_tle_records(source):
         }
         # Add a timeout so it doesn't hang forever
         response = requests.get(source, headers=headers, timeout=10)
-        data = response.text.splitlines(
+        data = response.text.splitlines()
         response = requests.get(source)
         data = response.text.splitlines()
     else:
