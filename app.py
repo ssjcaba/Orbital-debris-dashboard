@@ -14,7 +14,7 @@ def get_satellite_data():
     ts = load.timescale()
     t = ts.now()
     # Live URL for Active Satellites
-    url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle"
+    url = "active.txt"
     records = load_tle_records(url)
     results = compute_positions(records, ts, t)
     return pd.DataFrame(results)
