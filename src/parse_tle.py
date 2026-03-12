@@ -6,6 +6,12 @@ import requests
 def load_tle_records(source):
     # If source starts with http, it's a URL; otherwise, it's a file
     if source.startswith('http'):
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        # Add a timeout so it doesn't hang forever
+        response = requests.get(source, headers=headers, timeout=10)
+        data = response.text.splitlines(
         response = requests.get(source)
         data = response.text.splitlines()
     else:
